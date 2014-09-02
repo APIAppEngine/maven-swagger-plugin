@@ -32,7 +32,7 @@ public class ResourceParser
 
     public void execute()
     {
-        for (Resource resource : resourceListing.getResources()) {
+        for (Resource resource : resourceListing.getServices()) {
             List<ApiDeclaration> apiList = new ApiParser(resourceListing, resource).execute();
             this.apis.addAll(apiList);
         }

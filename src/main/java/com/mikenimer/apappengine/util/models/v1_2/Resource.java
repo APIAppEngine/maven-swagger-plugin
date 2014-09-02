@@ -12,11 +12,14 @@ public class Resource
 {
     //swagger spec
     /**
-     * Name of the resource, will be used to generate path to definition
+     * Name of the resource
      */
     @Parameter
-    private transient String name;
+    private String name;
 
+    /**
+     * Path / File Name to the json descriptor
+     */
     @Parameter
     private String path;
 
@@ -64,7 +67,7 @@ public class Resource
     public void setName(String name)
     {
         this.name = name;
-        this.setPath(name.replaceAll(" ", "_") +".json");
+        this.setPath("/../" +name.replaceAll(" ", "_") +".json");
     }
 
 

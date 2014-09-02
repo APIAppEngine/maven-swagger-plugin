@@ -4,6 +4,7 @@ import com.wordnik.swagger.annotations.Authorization;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @see https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md#523-operation-object
@@ -30,7 +31,7 @@ public class Operation
     /**
      * Required. A unique id for the operation that can be used by tools reading the output for further and easier manipulation. For example, Swagger-Codegen will use the nickname as the method name of the operation in the client it generates. The value MUST be alphanumeric and may include underscores. Whitespace characters are not allowed.
      */
-    private String nickname;
+    private String nickname = new Long(UUID.randomUUID().getLeastSignificantBits()).toString();
     //swagger spec
     /**
      * A list of MIME types this operation can produce. This is overrides the global produces definition at the root of the API Declaration. Each string value SHOULD represent a MIME type.

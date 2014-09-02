@@ -50,6 +50,14 @@ public class ApiParser
 
     public List<ApiDeclaration> execute()
     {
+        ApiDeclaration apiDeclaration = new ApiDeclaration();
+        apiDeclaration.setFileName(resource.getPath());
+        apiDeclaration.setApiVersion(resourceListing.getApiVersion());
+        apiDeclaration.setSwaggerVersion(resourceListing.getSwaggerVersion());
+        apiDeclaration.setBasePath(resource.getBasePath());
+
+
+
         for (String basePackage : basePackages) {
 
             try {
@@ -64,14 +72,6 @@ public class ApiParser
                     String rootPath = "";
                     boolean isApiController = false;
 
-                    ApiDeclaration apiDeclaration = new ApiDeclaration();
-                    apiDeclaration.setFileName(resource.getPath());
-                    apiDeclaration.setApiVersion(resourceListing.getApiVersion());
-                    apiDeclaration.setSwaggerVersion(resourceListing.getSwaggerVersion());
-                    apiDeclaration.setBasePath(resource.getBasePath());
-
-
-
                     // Look for @RequestMapping at the class level, and set that as a root
                     if (aClass.isAnnotationPresent(RequestMapping.class)) {
                         RequestMapping requestMappingAnnotation = aClass.getAnnotation(RequestMapping.class);
@@ -83,8 +83,8 @@ public class ApiParser
                                 rootPath = values[0];
                             }
 
-                            apiDeclaration.setConsumes(StringUtils.join(requestMappingAnnotation.consumes(), ","));
-                            apiDeclaration.setProduces(StringUtils.join(requestMappingAnnotation.produces(), ","));
+                            //apiDeclaration.setConsumes(StringUtils.join(requestMappingAnnotation.consumes(), ","));
+                            //apiDeclaration.setProduces(StringUtils.join(requestMappingAnnotation.produces(), ","));
                         }
                     }
 
@@ -96,13 +96,13 @@ public class ApiParser
                         apiDeclaration.setProtocols(apiAnnotation.protocols());
 
                         if( apiAnnotation.consumes().length() > 0 ) {
-                            apiDeclaration.setConsumes(apiAnnotation.consumes());
+                            apiDeclaration.setProduces(  StringUtils.join(apiAnnotation.consumes(), ",")  );
                         }
                         if( apiAnnotation.produces().length() > 0 ) {
-                            apiDeclaration.setProduces(apiAnnotation.produces());
+                            apiDeclaration.setProduces(  StringUtils.join(apiAnnotation.produces(), ",")  );
                         }
                         if( apiAnnotation.basePath().length() > 0 ) {
-                            apiDeclaration.setBasePath(apiAnnotation.basePath());
+                            //apiDeclaration.setBasePath(apiAnnotation.basePath());
                         }
 
 
@@ -139,6 +139,15 @@ public class ApiParser
                                         Operation operation = new Operation();
                                         api.getOperations().add(operation);
                                         operation.setMethod(httpMethod.name());
+                                        if( produces.length > 0) {
+                                            operation.setProduces(Arrays.toString(produces));
+                                        }
+                                        if( consumes.length > 0 ){
+                                            operation.setConsumes(Arrays.toString(consumes));
+                                        }
+
+
+
 
                                         for (Annotation[] annotations : method.getParameterAnnotations()) {
 
@@ -154,13 +163,12 @@ public class ApiParser
                                                 }
                                             });
 
+                                            OperationParameter parameter = new OperationParameter();
+                                            operation.getParameters().add(parameter);
 
 
                                             for (int i = 0; i < annotations.length; i++) {
                                                 Annotation annotation = annotations[i];
-
-                                                OperationParameter parameter = new OperationParameter();
-                                                operation.getParameters().add(parameter);
 
                                                 //multipart
                                                 if( annotation instanceof RequestPart)
@@ -168,6 +176,7 @@ public class ApiParser
                                                     //@see https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md#524-parameter-object
                                                     operation.setConsumes("multipart/form-data");
                                                     parameter.setParamType("form");
+                                                    parameter.setType("file");
                                                     parameter.setRequired( ((RequestPart)annotation).required() );
                                                     parameter.setName( ((RequestPart)annotation).value() );
                                                 }
@@ -232,7 +241,9 @@ public class ApiParser
                                             }
 
                                             //operation.setAuthorizations( apiOperationAnnotation.authorizations() );
-                                            operation.setNickname( apiOperationAnnotation.nickname() );
+                                            if( apiOperationAnnotation.nickname().length() > 0 ) {
+                                                operation.setNickname(apiOperationAnnotation.nickname());
+                                            }
                                             operation.setNotes( apiOperationAnnotation.notes() );
                                             api.setDescription( apiOperationAnnotation.value() );
                                             //apiAnnotation.hidden();

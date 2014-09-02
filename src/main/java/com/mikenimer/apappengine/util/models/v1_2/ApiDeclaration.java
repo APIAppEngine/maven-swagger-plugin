@@ -80,7 +80,7 @@ public class ApiDeclaration
 
     public void setFileName(String fileName)
     {
-        this.fileName = fileName.replace("/", "");
+        this.fileName = fileName.replace("/../", "");
     }
 
 

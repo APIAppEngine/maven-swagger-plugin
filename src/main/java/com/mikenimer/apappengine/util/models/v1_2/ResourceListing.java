@@ -18,13 +18,13 @@ public class ResourceListing
     /**
      * Provides the version of the application API (not to be confused by the specification version).
      */
-    @Parameter(required=false)
+    @Parameter(required = false)
     private String apiVersion = "v1.0.0";
 
     //swagger spec
     /**
      * Required. Specifies the Swagger Specification version being used. It can be used by the Swagger UI and other clients to interpret the API listing. The value MUST be an existing Swagger specification version.
-     Currently, "1.2" are valid values. The field is a string type for possible non-numeric versions in the future (for example, "1.2a").
+     * Currently, "1.2" are valid values. The field is a string type for possible non-numeric versions in the future (for example, "1.2a").
      */
     private String swaggerVersion = "1.2";
 
@@ -34,7 +34,7 @@ public class ResourceListing
      */
     @SerializedName("apis")
     @Parameter
-    private List<Resource> resources = new ArrayList<>();
+    private List<Resource> services = new ArrayList<>();
 
     /**
      * Provides information about the authorization schemes allowed on this API.
@@ -53,7 +53,6 @@ public class ResourceListing
      * Relative path under the web output directory.
      */
     private transient String outputWebDir = "/api-docs";
-
 
 
     public String getApiVersion()
@@ -80,15 +79,15 @@ public class ResourceListing
     }
 
 
-    public List<Resource> getResources()
+    public List<Resource> getServices()
     {
-        return resources;
+        return services;
     }
 
 
-    public void setResources(List<Resource> resources)
+    public void setServices(List<Resource> services)
     {
-        this.resources = resources;
+        this.services = services;
     }
 
 

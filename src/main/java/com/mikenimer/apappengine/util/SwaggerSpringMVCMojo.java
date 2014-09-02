@@ -1,7 +1,6 @@
 package com.mikenimer.apappengine.util;
 
 import com.mikenimer.apappengine.util.generators.v1_2.ResourceParser;
-import com.mikenimer.apappengine.util.models.v1_2.Api;
 import com.mikenimer.apappengine.util.models.v1_2.ApiDeclaration;
 import com.mikenimer.apappengine.util.models.v1_2.ResourceListing;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -31,11 +30,11 @@ import java.util.Set;
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class SwaggerSpringMVCMojo extends AbstractMojo
 {
-    @Parameter( defaultValue = "${project.build.directory}", property = "outputDir", required = true )
-    private File outputDirectory;
+    @Parameter( defaultValue = "${project.build.directory}/api-docs/docs/index.json", required = true )
+    private File outputDirectoryAndFile;
 
     @Parameter( required = true )
-    private ResourceListing resourceListing;
+    private ResourceListing apiListing;
 
     @Parameter(defaultValue = "${project}", required = true, readonly = true)
     private MavenProject project;
@@ -47,27 +46,27 @@ public class SwaggerSpringMVCMojo extends AbstractMojo
     private PluginDescriptor descriptor;
 
 
-    public File getOutputDirectory()
+    public File getOutputDirectoryAndFile()
     {
-        return outputDirectory;
+        return outputDirectoryAndFile;
     }
 
 
-    public void setOutputDirectory(File outputDirectory)
+    public void setOutputDirectoryAndFile(File outputDirectoryAndFile)
     {
-        this.outputDirectory = outputDirectory;
+        this.outputDirectoryAndFile = outputDirectoryAndFile;
     }
 
 
-    public ResourceListing getResourceListing()
+    public ResourceListing getApiListing()
     {
-        return resourceListing;
+        return apiListing;
     }
 
 
-    public void setResourceListing(ResourceListing resourceListing)
+    public void setApiListing(ResourceListing apiListing)
     {
-        this.resourceListing = resourceListing;
+        this.apiListing = apiListing;
     }
 
 
@@ -111,14 +110,14 @@ public class SwaggerSpringMVCMojo extends AbstractMojo
     public void execute() throws MojoExecutionException, MojoFailureException
     {
         getLog().debug("**********************************");
-        getLog().debug("version=" +resourceListing.getApiVersion());
-        getLog().debug("output director=" +outputDirectory);
+        getLog().debug("version=" +apiListing.getApiVersion());
+        getLog().debug("output director=" +outputDirectoryAndFile);
 
         // load up all of the classes so we can search for different annotations.
         loadClasses();
 
         // Parse all of the SpringMVC classes and create the swagger DOM
-        ResourceParser resourceParser = new ResourceParser(resourceListing);
+        ResourceParser resourceParser = new ResourceParser(apiListing);
         resourceParser.execute();
 
         // generate the final swagger json files
@@ -162,7 +161,7 @@ public class SwaggerSpringMVCMojo extends AbstractMojo
      */
     private void generateSwaggerFiles(ResourceParser resourceParser)
     {
-        File dir = new File(project.getBuild().getOutputDirectory() +resourceListing.getOutputWebDir());
+        File dir = new File(project.getBuild().getOutputDirectory() +apiListing.getOutputWebDir());
         if( !dir.exists() )
         {
             dir.mkdir();
@@ -171,15 +170,20 @@ public class SwaggerSpringMVCMojo extends AbstractMojo
         if( dir.isDirectory() ){
             try{
                 //write the ResourceListing root file
-                File resourceFile = new File(dir.getPath() +"/api.json");
+                File resourceFile = outputDirectoryAndFile;//new File(dir.getPath() +"/index.json");
+                if( !resourceFile.getParentFile().exists() )
+                {
+                    resourceFile.getParentFile().mkdir();
+                }
+
                 FileWriter writer = new FileWriter(resourceFile);
-                writer.write(resourceListing.toJson());
+                writer.write(apiListing.toJson());
                 writer.close();
 
                 //write each of the individual resource API files
                 int indx = 1;
                 for (ApiDeclaration api : resourceParser.getApis()) {
-                    File apiFile = new File(dir.getPath() +"/"  +api.getFileName());
+                    File apiFile = new File(resourceFile.getParentFile() +"/"  +api.getFileName());
                     FileWriter apiWriter = new FileWriter(apiFile);
                     apiWriter.write(api.toJson());
                     apiWriter.close();

@@ -40,7 +40,7 @@ public class OperationParameter
     private Boolean allowMultiple = false;
 
     //swagger datatype spec
-    private String type;
+    private String type = "input";
 
     //swagger datatype spec
     @SerializedName("$ref")
