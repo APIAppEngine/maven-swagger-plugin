@@ -3,11 +3,11 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.mikenimer.apappengine.util</groupId>
+    <groupId>com.mikenimer.apiappengine.util</groupId>
     <artifactId>swagger-plugin</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
-    <name>swagger-plugin Maven Plugin</name>
+    <name>swagger Maven Plugin</name>
 
     <!-- FIXME change it to the project's website -->
     <url>http://maven.apache.org</url>
@@ -33,14 +33,11 @@
             <version>3.2</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.3</version>
         </dependency>
-
-
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
@@ -155,7 +152,6 @@
         <profile>
             <id>run-its</id>
             <build>
-
                 <plugins>
                     <plugin>
                         <groupId>org.reflections</groupId>
