@@ -30,7 +30,7 @@ import java.util.Set;
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class SwaggerSpringMVCMojo extends AbstractMojo
 {
-    @Parameter( defaultValue = "${project.build.directory}/api-docs/docs/index.json", required = true )
+    @Parameter( defaultValue = "${project.build.directory}/api-docs/images/index.json", required = true )
     private File outputDirectoryAndFile;
 
     @Parameter( required = true )
