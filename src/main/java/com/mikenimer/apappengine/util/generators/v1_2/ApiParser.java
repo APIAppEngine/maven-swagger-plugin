@@ -1,5 +1,6 @@
 package com.mikenimer.apappengine.util.generators.v1_2;
 
+import com.mikenimer.apappengine.util.exceptions.ConfigException;
 import com.mikenimer.apappengine.util.models.v1_2.Api;
 import com.mikenimer.apappengine.util.models.v1_2.ApiDeclaration;
 import com.mikenimer.apappengine.util.models.v1_2.Operation;
@@ -23,7 +24,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -65,6 +65,9 @@ public class ApiParser
                 //find Spring @Controller classes
                 Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
 
+                if( classes.size() == 0 ){
+                    throw new ConfigException("No classes were in package: " +basePackage);
+                }
                 //1. find all of the SpringMVC controllers
                 int classIndx = 1;
                 for (Class<?> aClass : classes) {
